@@ -1,0 +1,23 @@
+
+#modal{
+    position: relative;
+    /* float: right; */
+    /* top: 5%; */
+    /* left: 70%; */
+    /* margin-top: -60px;
+    margin-left: -10px; */
+    /* max-width: 40%; */
+     /* height: 92%; */
+     width: 25%;
+     background-image: url('./bgimage.webp');
+     box-shadow:
+        0 2.8px 2.2px rgba(240, 233, 233, 0.034),
+        0 6.7px 5.3px rgba(238, 229, 229, 0.048),
+        0 12.5px 10px rgba(231, 222, 222, 0.06),
+        0 22.3px 17.9px rgba(233, 226, 226, 0.072),
+        0 41.8px 33.4px rgba(221, 211, 211, 0.086),
+        0 100px 80px rgba(241, 233, 233, 0.12)
+        
+                   
+                    
+}​
