@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<script> src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"</script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js"></script> -->
+		<script>
+			   $(window).bind("load", function () {
+        $('#work-in-progress').hide();
+    });
+
+		</script>
+		<title>Solar System</title>
+		<link rel="shortcut icon" href="./asset/favicon.png" type="image/x-icon">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+		<link type="text/css" rel="stylesheet" href="./modal.css">
+		<link type="text/css" rel="stylesheet" href="./splash.css">
+	</head>
+		 
+
+	<body>
+			
+
+	
+			<!-- <audio  autoplay="autoplay"  loop="true" >
+				<source src="sound/solar_bg.mp3">     
+			</audio>
+				 -->
+
+		<script type="module">
+
+					import * as THREE from './build/three.module.js';
+
+				//	import Stats from './jsm/libs/stats.module.js';
+
+					import { OrbitControls } from './jsm/controls/OrbitControls.js';
+					import { FBXLoader } from './jsm/loaders/FBXLoader.js';
+
+					let camera, scene, renderer, stats,mouse;
+					var object;
+					var child;
+					const clock = new THREE.Clock();
+					const parentOfPlanet = [];
+					let mixer;
+					var voice;
+				// var axis = new THREE.Vector3(1,1,0).normalize();
+				var isLoading = true;
+				
+		  
+			init();
+			animate();
+					
+					//adding the bg audio for solar system --
+					var audio = new Audio('sound/solar_bg.mp3');
+					audio.addEventListener('ended', function() {
+					
+					this.currentTime = 0;
+					this.play();
+			     	}, false);
+			      	audio.volume = 0.05;   
+			    	audio.play();
+
+       
+			function init() {
+				
+					const container = document.createElement( 'div' );
+					document.body.appendChild( container );
+					camera = new THREE.PerspectiveCamera( 15, window.innerWidth / window.innerHeight, 0.1, 200000 );
+					camera.position.set( 0,2000, 6800 );
+
+					scene = new THREE.Scene();
+					scene.background = new THREE.Color( 0x000000 );
+
+
+
+					const dirLight = new THREE.DirectionalLight( 0xffffff );
+					dirLight.position.set( 0, 200, 100 );
+					dirLight.castShadow = true;
+					dirLight.shadow.camera.top = 180;
+					dirLight.shadow.camera.bottom = - 100;
+					dirLight.shadow.camera.left = - 120;
+					dirLight.shadow.camera.right = 120;
+					scene.add( dirLight );
+
+
+
+			
+
+
+				// model
+						const loader = new FBXLoader();
+						
+						loader.load( './asset/Galaxy-NEW-2.fbx', function ( object ) {					
+							object.traverse( function ( c ) {
+								if ( c.isMesh ) {
+									var material=new THREE.MeshBasicMaterial();
+									var diff = c.material.map;
+									c.material = material;
+									c.material.skinning=false; 
+									c.material.map=diff;
+									
+								}
+								if(c.name.includes('_parent')){
+									parentOfPlanet.push(c);
+
+								}								
+								
+							} );
+									object.scale.set(0.01,0.01,0.01);
+									scene.add( object );			
+									isLoading=false;
+									
+									
+						} );
+
+	// update the picking ray with the camera and mouse position
+	
+				const raycaster = new THREE.Raycaster();
+				const mouse = new THREE.Vector2()
+
+
+				function onClick(event){
+				
+					event.preventDefault();
+					mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+					mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+					raycaster.setFromCamera( mouse, camera );
+					const intersects = raycaster.intersectObjects( scene.children,true );
+
+							if ( intersects.length > 0 ) {
+								const sun = {
+									Name: "SUN",
+									Diameter:" 864,000 miles",
+									Atmosphere: "Hydrogen,Helium,plasma etc",
+									Temp :"6000 °C",
+									plImage:"./planetInModal/sun.jpg"
+								}
+								const murcury = {
+									Name: "MERCURY",
+									Distance: "57900000km",
+									Diameter: "4,878 km",
+									Atmosphere: "Sodium, helium",
+									Temp : "-183 °C to 427 °C",
+									plImage:"./planetInModal/mercury.jpg"
+								}
+								const venus = {
+									Name: "VENUS",
+									Distance:"108,160,000 km",
+									Diameter:"12,104 km",
+									Atmosphere:"Carbon Dioxide (96%), Nitrogen (3.5%)",
+									Temp :"480 °C",
+									plImage:"./planetInModal/venus.jpg"
+								}
+								const earth = {
+									Name: "EARTH",
+									Distance:"149,600,000 km",
+									Diameter:"12,756 km",
+									Atmosphere:"Nitrogen (77%), Oxygen (21%)",
+									Temp :"14 °C",
+									plImage:"./planetInModal/earth.jpg"
+								}
+								const mars = {
+									Name: "MARS",
+									Distance:"227,936,640 km",
+									Diameter: "6,794 km",
+									Atmosphere: "Carbon Dioxide(95.3%), Argon",
+									Temp : "-63 °C",
+									plImage:"./planetInModal/mars.jpg"
+								}
+								const jupitar = {
+									Name: "JUPITAR",
+									Distance: "778,369,000 km",
+									Diameter: "142,984 km",
+									Atmosphere: "Hydrogen, Helium",
+									Temp : "-130 °C",
+									plImage:"./planetInModal/jupiter.jpg"
+								}
+								const saturn = {
+									Name: "SATURN",
+									Distance: "1,427,034,000",
+									Diameter: "120,536 km",
+									Atmosphere: "Hydrogen, Helium",
+									Temp : "-130 °C",
+									plImage:"./planetInModal/saturn.png"
+								}
+								const uranus = {
+									Name: "URANUS",
+									Distance: "2,870,658,186 km",
+									Diameter: "51,118 km",
+									Atmosphere: "Hydrogen, Helium, Methane",
+									Temp : "-200 °C",
+									plImage:"./planetInModal/uranus.jpg"
+								}
+								const neptune = {
+									Name: "NEPTUNE",
+									Distance: "4,496,976,000 km",
+									Diameter: "49,532 km",
+									Atmosphere: "Hydrogen, Helium, Methane",
+									Temp : "-200 °C",
+									plImage:"./planetInModal/neptune.jpg"
+								}
+								const pluto = {
+									Name: "PLUTO",
+									Distance: "4,436,820,000 to 7,375,930,000 km",
+									Diameter: "2,370 km",
+									Atmosphere: "Nitrogen,Methane,Carbonmonoxide",
+									Temp: "-228 °C",
+									plImage:"./planetInModal/pluto.jpg"
+								}
+								const moon = {
+									Name: "MOON",
+									Distance: "146,692,378 km.",
+									Diameter: "3,474.2 km",
+									Atmosphere: "Helium,Argon,Methane",
+									Temp: "-290 F to +240 F",
+									plImage:"./planetInModal/moon.jpg"
+								}
+	             console.log(intersects[0].object.name);   //printing the name of the children of 3D object in console
+	
+
+
+	  let plname = intersects[0].object.name;
+	  if(voice){
+	  voice.pause();
+	  voice.currentTime = 0;
+	}
+		// alert(plname);
+		switch(plname){
+			case 'Sun1':
+					displayModal(sun);
+					voice = new Audio('sound/SUN.mp3');
+					voice.play();
+				break;
+			case 'Mercury_child':
+					displayModal(murcury);
+					voice = new Audio('sound/MERCURY.mp3');
+					voice.play();
+			break;
+			case 'Venus_child':
+					voice = new Audio('sound/VENUS.mp3');
+					voice.play();
+					displayModal(venus);
+				break;
+			case 'Earth_child':
+					voice = new Audio('sound/EARTH.mp3');
+					voice.play();
+					displayModal(earth);
+				break;
+			case 'Mars_child':
+					voice = new Audio('sound/MARS.mp3');
+					voice.play();
+					displayModal(mars);
+				break;
+			case 'Jupiter_child':
+					voice = new Audio('sound/JUPITER.mp3');
+					voice.play();
+					displayModal(jupitar);
+				break;
+			case 'Saturn_child':
+					voice = new Audio('sound/SATURN.mp3');
+					voice.play();
+					displayModal(saturn);
+				break;
+			case 'Uranus_child':
+					voice = new Audio('sound/URANUS.mp3');
+					voice.play();
+					displayModal(uranus);
+				break;
+			case 'Neptune_child':
+					displayModal(neptune);
+					voice = new Audio('sound/NEPTUNE.mp3');
+					voice.play();
+				break;
+			case 'Pluto_child':
+			        voice = new Audio('sound/PLUTO.mp3');
+					voice.play();
+					displayModal(pluto);
+				
+				break;
+			case 'Moon_child':
+					displayModal(moon);
+				break;
+			default:
+				closeModal();
+		}
+
+	}
+
+	}
+				function displayModal(info){
+							var text = "";
+							var x;
+							text += "<img width='100%' src='./"+info.plImage+"'>";
+								for (x in info) {
+										if(x != 'plImage'){
+											text += "<p>"+ "<strong>"+ x +"</strong> : "+info[x]+ "<p>";
+
+										}
+
+								}
+						document.getElementById("modal").innerHTML = text;
+						document.getElementById("modal").style.cssText = "padding:4px; position: absolute; zIndex:1; border:1px solid #0000FF;border-radius:7px;color:#EEFE34";
+				}
+				function closeModal(){
+					document.getElementById("modal").style.cssText = "display: none";
+				}
+				var render = function(){
+					renderer.render(mouse,camera);
+				};
+            
+
+				document.addEventListener( 'click', onClick, false );
+
+
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			
+				container.appendChild( renderer.domElement );
+
+                //orbit controler
+				const controls = new OrbitControls( camera, renderer.domElement );
+				controls.maxDistance = 12000;
+
+				controls.target.set( 10, 10, 10 );
+
+				controls.update();
+
+
+				window.addEventListener( 'resize', onWindowResize );
+
+				// stats
+				// stats = new Stats();
+				// container.appendChild( stats.dom );
+			}
+
+			
+	
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+					function animate() {
+							requestAnimationFrame( animate );
+								
+							if(parentOfPlanet.length > 0){
+								     parentOfPlanet[0].rotation.y += 0.0029;   //jupiter
+									 parentOfPlanet[1].rotation.y += 0.0011; //saturn
+									 parentOfPlanet[2].rotation.y += 0.001; //uranus
+									 parentOfPlanet[3].rotation.y += 0.0007;  //neptune
+									 parentOfPlanet[4].rotation.y += 0.0005; //pluto
+									 parentOfPlanet[5].rotation.y += 0.008;  //murcury
+									 parentOfPlanet[6].rotation.y += 0.0077;   //venus
+									 parentOfPlanet[7].rotation.y += 0.0073;   //earth
+									 parentOfPlanet[9].rotation.y += 0.0070;   //mars
+							}
+							//	if ( mixer ) mixer.update( delta );
+
+									renderer.render( scene, camera );
+									//stats.update();
+									if(!isLoading)
+									hideLoader();
+									//console.log(camera.position);
+					}
+
+			
+					function hideLoader(){
+						document.getElementById('work-in-progress').style.display='none';
+					}
+		</script>    
+				   <!-- modal div -->
+						<div id='modal' >
+							
+						</div>
+
+					<!--loading page-->
+						<div class="center"><div  class="work-spinner" id="work-in-progress"></div>	
+						
+						</div>
+	</body>
+	
+</html>
